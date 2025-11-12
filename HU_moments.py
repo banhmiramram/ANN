@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # === Thư mục chứa ảnh nhị phân (đầu ra của bước 2) ===
-input_root = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\output_bin"
+input_root = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\out_put_bina"
 
 # === Danh sách lưu đặc trưng ===
 features = []
@@ -16,37 +16,38 @@ for class_name in os.listdir(input_root):
     if not os.path.isdir(class_path):
         continue
 
-    # Duyệt ảnh trong từng class
-    for filename in os.listdir(class_path):
-        if not (filename.lower().endswith(".jpg") or filename.lower().endswith(".png")):
-            continue
+    # Duyệt đệ quy tất cả thư mục con trong class
+    for root, dirs, files in os.walk(class_path):
+        for filename in files:
+            if not (filename.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tif'))):
+                continue
 
-        img_path = os.path.join(class_path, filename)
-        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-        if img is None:
-            continue
+            img_path = os.path.join(root, filename)
+            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            if img is None:
+                continue
 
-        # === Tính Moments & Hu Moments ===
-        moments = cv2.moments(img)
-        huMoments = cv2.HuMoments(moments)
+            # === Tính Moments & Hu Moments ===
+            moments = cv2.moments(img)
+            huMoments = cv2.HuMoments(moments)
 
-        # === Lấy log giữ nguyên dấu ===
-        hu_log = -np.sign(huMoments) * np.log10(np.abs(huMoments) + 1e-10)
-        hu_log = hu_log.flatten()  # Chuyển thành 1D
+            # === Lấy log giữ nguyên dấu ===
+            hu_log = -np.sign(huMoments) * np.log10(np.abs(huMoments) + 1e-10)
+            hu_log = hu_log.flatten()  # Chuyển thành 1D
 
-        # Thêm vào danh sách
-        features.append([class_name, *hu_log])
+            # Thêm vào danh sách
+            features.append([class_name, *hu_log])
 
 # === Chuyển sang DataFrame và lưu ===
 columns = ["class", "Hu1", "Hu2", "Hu3", "Hu4", "Hu5", "Hu6", "Hu7"]
 df = pd.DataFrame(features, columns=columns)
 
-# Chuẩn hóa các giá trị Hu về [0, 1] để dễ vẽ
+# === Chuẩn hóa các giá trị Hu về [0, 1] để dễ vẽ ===
 df_norm = df.copy()
 for col in columns[1:]:
     df_norm[col] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
 
-# Lưu ra file CSV
+# === Lưu ra file CSV ===
 output_csv = os.path.join(os.path.dirname(input_root), "hu_features.csv")
 df_norm.to_csv(output_csv, index=False)
 print(f"✅ Đã lưu đặc trưng Hu moments vào: {output_csv}")
