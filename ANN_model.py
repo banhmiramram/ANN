@@ -26,7 +26,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # ==============================
 # 1️⃣ ĐỌC DỮ LIỆU
 # ==============================
-file_path = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_encoded.csv"  # file đã có cột set
+file_path = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_encoded_train.csv"  # file đã có cột set
 df = pd.read_csv(file_path)
 
 # Cột đầu vào (Hu Moments)
@@ -54,13 +54,13 @@ def train_ann(hidden_neurons):
         Dense(5, activation='softmax')
     ])
     
-    optimizer = SGD(learning_rate=0.1)
+    optimizer = SGD(learning_rate=0.1) # Tốc độ học
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     
     history = model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
-        epochs=200,
+        epochs=200, #số lần lặp (epochs)
         batch_size=len(X_train),  # Batch Gradient Descent
         verbose=0
     )
@@ -69,7 +69,7 @@ def train_ann(hidden_neurons):
 # ==============================
 # 3️⃣ HUẤN LUYỆN VỚI 4 CẤU HÌNH KHÁC NHAU
 # ==============================
-neurons_list = [7, 8, 9, 10]
+neurons_list = [7,8,9,10] # Số nơ-ron ẩn khác nhau để thử
 histories = {}
 
 for n in neurons_list:

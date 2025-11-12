@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # === Thư mục chứa ảnh nhị phân (đầu ra của bước 2) ===
-input_root = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\out_put_bina"
+input_root = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\output_bina_train"
 
 # === Danh sách lưu đặc trưng ===
 features = []
@@ -48,7 +48,7 @@ for col in columns[1:]:
     df_norm[col] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
 
 # === Lưu ra file CSV ===
-output_csv = os.path.join(os.path.dirname(input_root), "hu_features.csv")
+output_csv = os.path.join(os.path.dirname(input_root), "hu_features_train.csv")
 df_norm.to_csv(output_csv, index=False)
 print(f"✅ Đã lưu đặc trưng Hu moments vào: {output_csv}")
 
