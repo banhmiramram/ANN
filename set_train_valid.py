@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 
 # ---- 1. Đọc file gốc ----
-file_path = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_train.csv"
+file_path = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_test_test.csv"
 df = pd.read_csv(file_path)
 
 # ---- 2. Mã hóa nhãn ----
@@ -23,7 +23,7 @@ df_new['set'] = 'train'
 df_new.loc[val_idx, 'set'] = 'val'
 
 # ---- 5. Lưu ra file mới ----
-new_file = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_encoded_train.csv"
+new_file = r"D:\Hiep\GK_AI\thuyet_trinh+Code\code\data\hu_features_encoded_test.csv"
 df_new.to_csv(new_file, index=False)
 
 print("✅ Đã mã hóa và chia dữ liệu. File mới lưu tại:")

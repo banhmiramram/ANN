@@ -48,7 +48,7 @@ for col in columns[1:]:
     df_norm[col] = (df[col] - df[col].min()) / (df[col].max() - df[col].min())
 
 # === Lưu ra file CSV ===
-output_csv = os.path.join(os.path.dirname(input_root), "hu_features_test.csv")
+output_csv = os.path.join(os.path.dirname(input_root), "hu_features_test_test.csv")
 df_norm.to_csv(output_csv, index=False)
 print(f"✅ Đã lưu đặc trưng Hu moments vào: {output_csv}")
 

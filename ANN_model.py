@@ -54,13 +54,13 @@ def train_ann(hidden_neurons):
         Dense(5, activation='softmax')
     ])
     
-    optimizer = SGD(learning_rate=0.1) # Tốc độ học
+    optimizer = SGD(learning_rate=0.01) # Tốc độ học
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     
     history = model.fit(
         X_train, y_train,
         validation_data=(X_val, y_val),
-        epochs=200, #số lần lặp (epochs)
+        epochs=5000, #số lần lặp (epochs)
         batch_size=len(X_train),  # Batch Gradient Descent
         verbose=0
     )
@@ -71,11 +71,24 @@ def train_ann(hidden_neurons):
 # ==============================
 neurons_list = [7,8,9,10] # Số nơ-ron ẩn khác nhau để thử
 histories = {}
+best_model = None
+best_val_acc = 0  # 🟩 dùng để lưu mô hình tốt nhất
 
 for n in neurons_list:
     print(f"\n🔹 Huấn luyện mô hình với {n} nơ-ron ẩn ...")
-    _, hist = train_ann(n)
+    model, hist = train_ann(n)
     histories[n] = hist
+
+    # 🟩 Theo dõi độ chính xác validation để lưu mô hình tốt nhất
+    val_acc = max(hist.history['val_accuracy'])
+    print(f"   ➤ Val accuracy cao nhất: {val_acc:.4f}")
+    if val_acc > best_val_acc:
+        best_val_acc = val_acc
+        best_model = model
+
+if best_model:
+    best_model.save("best_model.h5")
+    print(f"\n✅ Đã lưu mô hình tốt nhất (val_acc={best_val_acc:.4f}) vào: best_model.h5")
 
 # ==============================
 # 4️⃣ VẼ ĐỒ THỊ HÀM LỖI (LOSS)
@@ -92,22 +105,6 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show(block=True)  # 🔥 đảm bảo đồ thị không bị tắt
-
-# ==============================
-# 5️⃣ VẼ ĐỒ THỊ ĐỘ CHÍNH XÁC (ACCURACY)
-# ==============================
-plt.figure(figsize=(10,6))
-for n, hist in histories.items():
-    plt.plot(hist.history['accuracy'], label=f"Train acc (hidden={n})")
-    plt.plot(hist.history['val_accuracy'], '--', label=f"Val acc (hidden={n})")
-
-plt.title("Độ chính xác Train/Validation theo Epoch")
-plt.xlabel("Epoch")
-plt.ylabel("Accuracy")
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show(block=True)  # 🔥 giữ cửa sổ hiển thị đến khi bạn đóng
 
 # ==============================
 # 6️⃣ GỢI Ý NHẬN XÉT (cho báo cáo)
